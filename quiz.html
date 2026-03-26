@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXTY | اختبار مهارات ICDL</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">NEXTY</div>
+        <ul class="nav-links">
+            <li><a href="../index.html">الرئيسية</a></li>
+            <li><a href="lessons.html">الدروس</a></li>
+            <li><a href="quiz.html">الاختبارات</a></li>
+        </ul>
+    </nav>
+
+    <header class="hero">
+        <div class="container">
+            <h1>اختبار مهارات ICDL التفاعلي</h1>
+            <p>اختبر معلوماتك في أساسيات الحاسوب والبرامج المكتبية</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <a href="../index.html" class="btn btn-back">العودة للرئيسية</a>
+
+        <div id="quiz-wrapper" class="quiz-container">
+            <div id="quiz-content">
+                <!-- Questions will be injected here -->
+            </div>
+            
+            <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+                <button id="submit-btn" class="btn">عرض النتيجة</button>
+                <button id="restart-btn" class="btn" style="background-color: #6c757d; display: none;">إعادة الاختبار</button>
+            </div>
+
+            <div id="result-display" class="result" style="display: none; padding: 1.5rem; border-radius: 8px; margin-top: 2rem;">
+                <!-- Results will be shown here -->
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 NEXTY - جميع الحقوق محفوظة | منصة تعليم ICDL</p>
+    </footer>
+
+    <script>
+        const questions = [
+            {
+                question: "أي مما يلي يعتبر من المكونات المادية (Hardware) للحاسوب؟",
+                options: ["نظام التشغيل Windows", "متصفح Google Chrome", "وحدة المعالجة المركزية CPU", "برنامج Microsoft Word"],
+                correct: 2
+            },
+            {
+                question: "ما هو اختصار لوحة المفاتيح المستخدم لحفظ مستند في برنامج Word؟",
+                options: ["Ctrl + C", "Ctrl + S", "Ctrl + V", "Ctrl + P"],
+                correct: 1
+            },
+            {
+                question: "في برنامج Excel، بماذا تبدأ الصيغة الرياضية دائماً؟",
+                options: ["علامة (+)", "علامة (*)", "علامة (=)", "علامة (#)"],
+                correct: 2
+            },
+            {
+                question: "أي من البرامج التالية يستخدم لإنشاء العروض التقديمية؟",
+                options: ["Excel", "PowerPoint", "Word", "Access"],
+                correct: 1
+            },
+            {
+                question: "ما هي الوظيفة الأساسية لبرنامج Microsoft Excel؟",
+                options: ["كتابة الرسائل", "تصميم الصور", "إدارة الجداول والبيانات الحسابية", "تصفح الإنترنت"],
+                correct: 2
+            }
+        ];
+
+        function loadQuiz() {
+            const quizContent = document.getElementById('quiz-content');
+            quizContent.innerHTML = '';
+            
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                
+                let optionsHTML = '';
+                q.options.forEach((opt, optIndex) => {
+                    optionsHTML += `
+                        <label>
+                            <input type="radio" name="q${index}" value="${optIndex}">
+                            ${opt}
+                        </label>
+                    `;
+                });
+
+                questionDiv.innerHTML = `
+                    <h3>${index + 1}. ${q.question}</h3>
+                    <div class="options">
+                        ${optionsHTML}
+                    </div>
+                `;
+                quizContent.appendChild(questionDiv);
+            });
+        }
+
+        document.getElementById('submit-btn').addEventListener('click', () => {
+            let score = 0;
+            let unanswered = false;
+
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                if (selected) {
+                    if (parseInt(selected.value) === q.correct) {
+                        score++;
+                    }
+                } else {
+                    unanswered = true;
+                }
+            });
+
+            if (unanswered) {
+                alert("يرجى الإجابة على جميع الأسئلة قبل عرض النتيجة.");
+                return;
+            }
+
+            const resultDisplay = document.getElementById('result-display');
+            resultDisplay.style.display = 'block';
+            
+            let message = '';
+            let bgColor = '';
+            
+            if (score === questions.length) {
+                message = "أحسنت! لقد حصلت على درجة كاملة. أنت محترف في ICDL!";
+                bgColor = '#d4edda';
+            } else if (score >= questions.length / 2) {
+                message = `نتيجة جيدة! لقد أجبت على ${score} من أصل ${questions.length} أسئلة بشكل صحيح.`;
+                bgColor = '#fff3cd';
+            } else {
+                message = `تحتاج لمزيد من المراجعة. لقد أجبت على ${score} فقط من أصل ${questions.length} أسئلة.`;
+                bgColor = '#f8d7da';
+            }
+
+            resultDisplay.innerHTML = message;
+            resultDisplay.style.backgroundColor = bgColor;
+            
+            document.getElementById('submit-btn').style.display = 'none';
+            document.getElementById('restart-btn').style.display = 'inline-block';
+        });
+
+        document.getElementById('restart-btn').addEventListener('click', () => {
+            document.getElementById('result-display').style.display = 'none';
+            document.getElementById('submit-btn').style.display = 'inline-block';
+            document.getElementById('restart-btn').style.display = 'none';
+            loadQuiz();
+        });
+
+        // Initial load
+        loadQuiz();
+    </script>
+</body>
+</html>
